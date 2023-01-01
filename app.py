@@ -43,10 +43,16 @@ def load_evaluations_from_db():
 
     conn = sqlite3.connect(DB_FILE)
 
-    # If table does not exist yet, return empty df
     try:
         query = """
-        SELECT ticker, prediction_date, direction_correct, abs_error, run_timestamp
+        SELECT
+            ticker,
+            prediction_date,
+            direction_correct,
+            abs_error,
+            predicted_return,
+            actual_return,
+            run_timestamp
         FROM evaluations
         """
         df = pd.read_sql_query(query, conn)
@@ -189,14 +195,23 @@ def build_best_signals_table(pred_df, eval_df):
         if not ticker_eval.empty:
             direction_accuracy = ticker_eval["direction_correct"].astype(float).mean() * 100
             avg_abs_error = ticker_eval["abs_error"].astype(float).mean()
+
+            if "actual_return" in ticker_eval.columns:
+                avg_actual_return = ticker_eval["actual_return"].astype(float).mean() * 100
+            else:
+                avg_actual_return = None
         else:
             direction_accuracy = None
             avg_abs_error = None
+            avg_actual_return = None
 
         score = expected_return_pct
 
         if direction_accuracy is not None:
             score += (direction_accuracy - 50) * 0.2
+
+        if avg_actual_return is not None:
+            score += avg_actual_return * 0.5
 
         if avg_abs_error is not None:
             score -= avg_abs_error * 0.1
@@ -219,6 +234,7 @@ def build_best_signals_table(pred_df, eval_df):
             "final_pred_close": round(final_pred_close, 2),
             "expected_return_pct": round(expected_return_pct, 2),
             "direction_accuracy_pct": round(direction_accuracy, 2) if direction_accuracy is not None else None,
+            "avg_actual_return_pct": round(avg_actual_return, 2) if avg_actual_return is not None else None,
             "avg_abs_error": round(avg_abs_error, 2) if avg_abs_error is not None else None,
             "score": round(score, 2),
             "signal": signal,
@@ -239,7 +255,7 @@ if pred_df.empty:
     st.warning("No prediction data found in data/predictions.db yet.")
     st.stop()
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric("Prediction Rows", len(pred_df))
@@ -256,6 +272,9 @@ with col3:
         st.metric("Last Updated", format_timestamp(last_updated))
     else:
         st.metric("Last Updated", "Unknown")
+
+with col4:
+    st.metric("Evaluated Rows", len(eval_df))
 
 st.divider()
 
