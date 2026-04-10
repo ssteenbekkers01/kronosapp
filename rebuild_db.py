@@ -59,7 +59,7 @@ CREATE TABLE predictions (
     low REAL NOT NULL,
     close REAL NOT NULL,
     run_timestamp TEXT NOT NULL,
-    UNIQUE(ticker, timestamps, run_timestamp)
+    UNIQUE(ticker, timestamps)
 )
 """)
 
