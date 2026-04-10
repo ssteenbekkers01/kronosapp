@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS predictions (
     low REAL NOT NULL,
     close REAL NOT NULL,
     run_timestamp TEXT NOT NULL,
-    UNIQUE(ticker, timestamps, run_timestamp)
+    UNIQUE(ticker, timestamps)
 )
 """
 conn.execute(create_table_query)
