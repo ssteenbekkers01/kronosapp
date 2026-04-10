@@ -95,6 +95,11 @@ for _, row in pred_df.iterrows():
     error = actual_close - predicted_close
     abs_error = abs(error)
 
+if actual_close != 0:
+    error_pct = abs_error / actual_close
+else:
+    error_pct = None
+
     results.append({
         "ticker": ticker,
         "prediction_date": prediction_date.strftime("%Y-%m-%d"),
@@ -108,6 +113,7 @@ for _, row in pred_df.iterrows():
         "abs_error": abs_error,
         "run_timestamp": run_timestamp,
         "predicted_return": predicted_return,
+        "error_pct": error_pct,
         "actual_return": actual_return
     })
 

@@ -247,9 +247,43 @@ def build_best_signals_table(pred_df, eval_df):
     signals_df = signals_df.sort_values("score", ascending=False).reset_index(drop=True)
     return signals_df
 
+def build_performance_summary(eval_df):
+    if eval_df.empty:
+        return {
+            "evaluated_rows": 0,
+            "win_rate_pct": None,
+            "avg_predicted_return_pct": None,
+            "avg_actual_return_pct": None,
+            "avg_abs_error": None,
+        }
+
+    summary = {
+        "evaluated_rows": len(eval_df),
+        "win_rate_pct": None,
+        "avg_predicted_return_pct": None,
+        "avg_actual_return_pct": None,
+        "avg_abs_error": None,
+    }
+
+    if "direction_correct" in eval_df.columns:
+        summary["win_rate_pct"] = eval_df["direction_correct"].astype(float).mean() * 100
+
+    if "predicted_return" in eval_df.columns:
+        summary["avg_predicted_return_pct"] = eval_df["predicted_return"].astype(float).mean() * 100
+
+    if "actual_return" in eval_df.columns:
+        summary["avg_actual_return_pct"] = eval_df["actual_return"].astype(float).mean() * 100
+
+    if "error_pct" in eval_df.columns:
+        summary["avg_error_pct"] = eval_df["error_pct"].astype(float).mean() * 100
+    else:
+        summary["avg_error_pct"] = None
+
+    return summary
 
 pred_df = load_predictions_from_db()
 eval_df = load_evaluations_from_db()
+performance = build_performance_summary(eval_df)
 
 if pred_df.empty:
     st.warning("No prediction data found in data/predictions.db yet.")
@@ -275,6 +309,41 @@ with col3:
 
 with col4:
     st.metric("Evaluated Rows", len(eval_df))
+
+st.subheader("Performance Summary")
+
+p1, p2, p3, p4 = st.columns(4)
+
+with p1:
+    st.metric("Evaluated Predictions", performance["evaluated_rows"])
+
+with p2:
+    st.metric(
+        "Win Rate",
+        f"{performance['win_rate_pct']:.1f}%"
+        if performance["win_rate_pct"] is not None else "N/A"
+    )
+
+with p3:
+    st.metric(
+        "Avg Predicted Return",
+        f"{performance['avg_predicted_return_pct']:.2f}%"
+        if performance["avg_predicted_return_pct"] is not None else "N/A"
+    )
+
+with p4:
+    st.metric(
+        "Avg Actual Return",
+        f"{performance['avg_actual_return_pct']:.2f}%"
+        if performance["avg_actual_return_pct"] is not None else "N/A"
+    )
+
+st.caption(
+    f"Avg Prediction Error: {performance['avg_error_pct']:.2f}%"
+    if performance["avg_error_pct"] is not None else "Avg Prediction Error: N/A"
+)
+
+st.divider()
 
 st.divider()
 
