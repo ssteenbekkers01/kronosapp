@@ -31,8 +31,8 @@ def is_valid_yahoo_ticker(ticker):
             interval="1d",
             progress=False,
             auto_adjust=False,
+            threads=False
         )
-
         return not data.empty
     except Exception:
         return False
