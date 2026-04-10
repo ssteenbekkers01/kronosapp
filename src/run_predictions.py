@@ -27,6 +27,7 @@ else:
 
         try:
             data = pd.read_csv(file_path)
+            data = data.dropna(subset=["Date", "Open", "High", "Low", "Close", "Volume"])
         except FileNotFoundError:
             print(f"{ticker}: file not found")
             continue
