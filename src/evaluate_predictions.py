@@ -16,12 +16,15 @@ CREATE TABLE IF NOT EXISTS evaluations (
     previous_close REAL,
     predicted_close REAL,
     actual_close REAL,
+    predicted_return REAL,
+    actual_return REAL,
     predicted_direction TEXT,
     actual_direction TEXT,
     direction_correct BOOLEAN,
     error REAL,
     abs_error REAL,
     run_timestamp TEXT
+
 )
 """
 conn.execute(create_table_query)
@@ -85,6 +88,8 @@ for _, row in pred_df.iterrows():
     predicted_direction = "up" if predicted_close > previous_close else "down"
     actual_direction = "up" if actual_close > previous_close else "down"
     direction_correct = predicted_direction == actual_direction
+    predicted_return = (predicted_close - previous_close) / previous_close
+    actual_return = (actual_close - previous_close) / previous_close
 
     error = actual_close - predicted_close
     abs_error = abs(error)
@@ -100,7 +105,9 @@ for _, row in pred_df.iterrows():
         "direction_correct": direction_correct,
         "error": error,
         "abs_error": abs_error,
-        "run_timestamp": run_timestamp
+        "run_timestamp": run_timestamp,
+        "predicted_return": predicted_return,
+        "actual_return": actual_return
     })
 
     checked_count += 1
