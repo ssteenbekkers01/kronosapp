@@ -1,0 +1,10 @@
+kronos-env/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+data/
+.streamlit/secrets.toml
+.env
+kronos-envsource/
