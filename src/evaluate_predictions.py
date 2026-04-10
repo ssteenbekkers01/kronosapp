@@ -148,5 +148,16 @@ else:
 
 conn.close()
 
-print(f"\nChecked rows: {checked_count}")
-print(f"Still in the future: {future_count}")
+if results:
+    eval_df = pd.DataFrame(results)
+
+    if not eval_df.empty:
+        win_rate = (eval_df["direction_correct"] == True).mean() * 100
+        avg_actual_return = eval_df["actual_return"].mean() * 100
+
+        send_alert(
+            f"📊 Kronos evaluation summary\n"
+            f"Evaluated: {len(eval_df)}\n"
+            f"Win rate: {win_rate:.1f}%\n"
+            f"Avg actual return: {avg_actual_return:.2f}%"
+        )
