@@ -1,3 +1,5 @@
+import io
+from contextlib import redirect_stdout, redirect_stderr
 import sqlite3
 from datetime import datetime
 import yfinance as yf
@@ -25,14 +27,15 @@ def is_valid_yahoo_ticker(ticker):
     ticker = ticker.upper().strip()
 
     try:
-        data = yf.download(
-            ticker,
-            period="5d",
-            interval="1d",
-            progress=False,
-            auto_adjust=False,
-            threads=False
-        )
+        with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            data = yf.download(
+                ticker,
+                period="5d",
+                interval="1d",
+                progress=False,
+                auto_adjust=False,
+                threads=False
+            )
         return not data.empty
     except Exception:
         return False
