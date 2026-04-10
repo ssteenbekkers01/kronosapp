@@ -9,3 +9,4 @@ data/
 .env
 kronos-envsource/
 .telegram_alerts.env
+.telegram_alerts.env

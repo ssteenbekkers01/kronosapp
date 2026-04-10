@@ -254,7 +254,8 @@ def build_performance_summary(eval_df):
             "win_rate_pct": None,
             "avg_predicted_return_pct": None,
             "avg_actual_return_pct": None,
-            "avg_abs_error": None,
+            "avg_error_pct": None,
+            "return_gap_pct": None,
         }
 
     summary = {
@@ -262,7 +263,8 @@ def build_performance_summary(eval_df):
         "win_rate_pct": None,
         "avg_predicted_return_pct": None,
         "avg_actual_return_pct": None,
-        "avg_abs_error": None,
+        "avg_error_pct": None,
+        "return_gap_pct": None,
     }
 
     if "direction_correct" in eval_df.columns:
@@ -274,10 +276,16 @@ def build_performance_summary(eval_df):
     if "actual_return" in eval_df.columns:
         summary["avg_actual_return_pct"] = eval_df["actual_return"].astype(float).mean() * 100
 
+    if (
+        summary["avg_actual_return_pct"] is not None
+        and summary["avg_predicted_return_pct"] is not None
+    ):
+        summary["return_gap_pct"] = (
+            summary["avg_actual_return_pct"] - summary["avg_predicted_return_pct"]
+        )
+
     if "error_pct" in eval_df.columns:
         summary["avg_error_pct"] = eval_df["error_pct"].astype(float).mean() * 100
-    else:
-        summary["avg_error_pct"] = None
 
     return summary
 
@@ -312,7 +320,7 @@ with col4:
 
 st.subheader("Performance Summary")
 
-p1, p2, p3, p4 = st.columns(4)
+p1, p2, p3, p4, p5 = st.columns(5)
 
 with p1:
     st.metric("Evaluated Predictions", performance["evaluated_rows"])
@@ -336,6 +344,13 @@ with p4:
         "Avg Actual Return",
         f"{performance['avg_actual_return_pct']:.2f}%"
         if performance["avg_actual_return_pct"] is not None else "N/A"
+    )
+
+with p5:
+    st.metric(
+        "Return Gap",
+        f"{performance['return_gap_pct']:.2f}%"
+        if performance["return_gap_pct"] is not None else "N/A"
     )
 
 st.caption(
