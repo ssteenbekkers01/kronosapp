@@ -1,3 +1,4 @@
+from src.utils.telegram import send_alert
 import subprocess
 import sys
 
@@ -5,7 +6,7 @@ steps = [
     ("Refresh stock data", "python src/test_portfolio_data.py"),
     ("Run predictions", "python src/run_predictions.py"),
     ("Update Database", "python src/update_db.py"),
-    ("Evaluate predictions", "python src/evaluate_predictions.py"),
+    ("Evaluate predictions", "python -m src.evaluate_predictions"),
     ("Show summary stats", "python src/summary_stats.py"),
 ]
 

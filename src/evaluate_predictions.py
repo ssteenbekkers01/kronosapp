@@ -1,4 +1,4 @@
-from utils.telegram import send_alert
+from src.utils.telegram import send_alert
 import os
 import pandas as pd
 import sqlite3

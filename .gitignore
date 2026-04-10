@@ -8,3 +8,4 @@ data/
 .streamlit/secrets.toml
 .env
 kronos-envsource/
+.telegram_alerts.env
