@@ -3,11 +3,12 @@ import subprocess
 import sys
 
 steps = [
-    ("Refresh stock data", "python src/test_portfolio_data.py"),
-    ("Run predictions", "python src/run_predictions.py"),
-    ("Update Database", "python src/update_db.py"),
-    ("Evaluate predictions", "python -m src.evaluate_predictions"),
-    ("Show summary stats", "python src/summary_stats.py"),
+    ("Refresh stock data", f"{sys.executable} src/test_portfolio_data.py"),
+    ("Run predictions", f"{sys.executable} src/run_predictions.py"),
+    ("Update Database", f"{sys.executable} src/update_db.py"),
+    ("Evaluate predictions", f"{sys.executable} src/evaluate_predictions.py"),
+    ("Show summary stats", f"{sys.executable} src/summary_stats.py"),
+]
 ]
 
 for step_name, command in steps:
