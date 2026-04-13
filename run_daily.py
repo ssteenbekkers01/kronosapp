@@ -9,7 +9,6 @@ steps = [
     ("Evaluate predictions", f"{sys.executable} src/evaluate_predictions.py"),
     ("Show summary stats", f"{sys.executable} src/summary_stats.py"),
 ]
-]
 
 for step_name, command in steps:
     print(f"\n--- {step_name} ---")
